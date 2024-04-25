@@ -118,8 +118,26 @@ contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
         return _soldTickets[poolId][roundId];
     }
 
-    function getParticipationRecords(address user) external view returns (ParticipationRecord[] memory) {
+    function getAllParticipationRecords(address user) external view returns (ParticipationRecord[] memory) {
         return _userParticipationRecords[user];
+    }
+
+    function getParticipationRecordsByPoolRound(address user, bytes32 poolId, uint256 roundId) external view returns (ParticipationRecord[] memory records) {
+        ParticipationRecord[] memory allRecords = _userParticipationRecords[user];
+        ParticipationRecord[] memory tempRecords = new ParticipationRecord[](allRecords.length);
+        uint256 realLength;
+        for (uint256 i = 0; i < allRecords.length; i++) {
+            ParticipationRecord memory record = allRecords[i];
+            if (poolId == record.poolId && roundId == record.roundId) {
+                tempRecords[realLength] = record;
+                realLength++;
+            }
+        }
+        
+        records = new ParticipationRecord[](realLength);
+        for (uint256 i = 0; i < realLength; i++) {
+            records[i] = tempRecords[i];
+        }
     }
 
     function getWonParticipationRecords(address user) public view returns (ParticipationRecord[] memory records, uint256 totalPrizes) {
@@ -135,7 +153,7 @@ contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
                 if (winNumber == record.tickets[j]) {
                     uint32[] memory winningTicket = new uint32[](1);
                     winningTicket[0] = winNumber;
-                    tempRecords[realLength] = ParticipationRecord(poolId, roundId, block.timestamp, 1, winningTicket);
+                    tempRecords[realLength] = ParticipationRecord(poolId, roundId, record.timestamp, 1, winningTicket);
                     totalPrizes += _poolInfoMap[poolId].prize;
                     realLength++;
                     break;

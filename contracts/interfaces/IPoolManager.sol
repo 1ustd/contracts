@@ -126,7 +126,9 @@ interface IPoolManager {
 
     function getSoldTickets(bytes32 poolId, uint256 roundId) external view returns (uint32[] memory soldTickets);
 
-    function getParticipationRecords(address user) external view returns (ParticipationRecord[] memory);
+    function getAllParticipationRecords(address user) external view returns (ParticipationRecord[] memory);
+
+    function getParticipationRecordsByPoolRound(address user, bytes32 poolId, uint256 roundId) external view returns (ParticipationRecord[] memory);
 
     function getWonParticipationRecords(address user) external view returns (ParticipationRecord[] memory, uint256 totalPrizes);
 
