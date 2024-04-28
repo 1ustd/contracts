@@ -133,7 +133,7 @@ contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
                 realLength++;
             }
         }
-        
+
         records = new ParticipationRecord[](realLength);
         for (uint256 i = 0; i < realLength; i++) {
             records[i] = tempRecords[i];
@@ -249,7 +249,6 @@ contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
         uint256 roundId,
         uint32[] calldata tickets
     ) external {
-        if (userRegistar.getUserId(msg.sender) == 0) revert NotRegistered();
         if (tickets.length == 0) revert NoTicketSpecified();
 
         PoolInfo memory poolInfo = _poolInfoMap[poolId];

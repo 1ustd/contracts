@@ -20,11 +20,14 @@ contract UserRegistar is IUserRegistar, ERC6150Enumerable {
     }
 
     function getReferrer(address user) external view returns (address referrer) {
-        try this.parentOf(getUserId[user]) returns (uint256 parentId) {
-            if (parentId > 0) {
-                referrer = this.ownerOf(parentId);
-            }
-        } catch {}
+        uint256 userId = getUserId[user];
+        if (userId > 0) {
+            try this.parentOf(getUserId[user]) returns (uint256 parentId) {
+                if (parentId > 0) {
+                    referrer = this.ownerOf(parentId);
+                }
+            } catch {}
+        }
     }
 
     /**
