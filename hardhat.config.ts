@@ -24,10 +24,14 @@ const config: HardhatUserConfig = {
       url: vars.get("ARBITRUM_SEPOLIA_URL"),
       accounts: [vars.get("PRIVATE_KEY")],
     },
+    arbitrum_one: {
+      url: vars.get("ARBITRUM_ONE_URL"),
+      accounts: [vars.get("PRIVATE_KEY")],
+    },
   },
   etherscan: {
-    apiKey: vars.get("ETHERSCAN_API_KEY"),
-    // apiKey: vars.get("ARBISCAN_API_KEY"),
+    // apiKey: vars.get("ETHERSCAN_API_KEY"),
+    apiKey: vars.get("ARBISCAN_API_KEY"),
   },
 };
 

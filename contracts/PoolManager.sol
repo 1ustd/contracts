@@ -3,12 +3,13 @@ pragma solidity ^0.8.20;
 
 import './interfaces/IPoolManager.sol';
 import './interfaces/IUserRegistar.sol';
+import './interfaces/IVRFConsumer.sol';
+import './interfaces/IVRFConsumerCallback.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
-import '@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol';
 
-contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
+contract PoolManager is IPoolManager, IVRFConsumerCallback, Ownable {
     using SafeERC20 for IERC20;
 
     uint24 public constant HUNDRED_PERCENT = 1000000; // 100%
@@ -17,13 +18,7 @@ contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
 
     IERC20 public immutable usdt;
     IUserRegistar public immutable userRegistar;
-    VRFCoordinatorV2Interface public immutable vrfCoordinator;
-
-    // params for vrfCoordinator.requestRandomWords function
-    bytes32 public keyHash;
-    uint64 public subId;
-    uint16 public minRequestConfirmations = 3;
-    uint32 public callbackGasLimit = 100000;
+    IVRFConsumer public vrfConsumer;
 
     // if use subgraph, can remove
     mapping(address referrer => uint256) public referralRewardAccumulated;
@@ -41,33 +36,15 @@ contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
     constructor(
         uint24 referralFee_,
         address usdt_,
-        address userRegistar_,
-        address vrfCoordinator_,
-        bytes32 keyHash_,
-        uint64 subId_
-    ) Ownable(msg.sender) VRFConsumerBaseV2(vrfCoordinator_) {
+        address userRegistar_
+    ) Ownable(msg.sender) {
         referralFee = referralFee_;
         usdt = IERC20(usdt_);
         userRegistar = IUserRegistar(userRegistar_);
-        vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinator_);
-        keyHash = keyHash_;
-        subId = subId_;
     }
 
-    function updateKeyHash(bytes32 newKeyHash) external onlyOwner {
-        keyHash = newKeyHash;
-    }
-
-    function updateSubId(uint64 newSubId) external onlyOwner {
-        subId = newSubId;
-    }
-
-    function updateMinRequestConfirmations(uint16 newMinRequestConfirmations) external onlyOwner {
-        minRequestConfirmations = newMinRequestConfirmations;
-    }
-
-    function updateCallbackGasLimit(uint32 newGasLimit) external onlyOwner {
-        callbackGasLimit = newGasLimit;
+    function setVRFConsumer(address vrfConsumer_) external onlyOwner {
+        vrfConsumer = IVRFConsumer(vrfConsumer_);
     }
 
     function updateReferralFee(uint24 newReferralFee) external onlyOwner {
@@ -290,7 +267,7 @@ contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
         emit TicketsSold(msg.sender, poolId, roundId, tickets);
 
         if (roundInfo.leftTickets == 0) {
-            uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subId, minRequestConfirmations, callbackGasLimit, 1);
+            uint256 requestId = vrfConsumer.requestRandomWords();
             _vrfRequestInfoMap[requestId] = VRFRequestInfo(poolId, roundId);
             roundInfo.vrfRequestId = requestId;
             roundInfo.endTime = uint128(block.timestamp);
@@ -323,7 +300,7 @@ contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
         if (block.timestamp < roundInfo.endTime) revert NotEnded();
         if (roundInfo.vrfRequestId > 0) revert AlreadyDrawn();
 
-        uint256 requestId = vrfCoordinator.requestRandomWords(keyHash, subId, minRequestConfirmations, callbackGasLimit, 1);
+        uint256 requestId = vrfConsumer.requestRandomWords();
         _vrfRequestInfoMap[requestId] = VRFRequestInfo(poolId, roundId);
         roundInfo.vrfRequestId = requestId;
         _poolInfoMap[poolId].roundInfos[roundId - 1] = roundInfo;
@@ -375,7 +352,8 @@ contract PoolManager is IPoolManager, Ownable, VRFConsumerBaseV2 {
         usdt.safeTransfer(to, amount);
     }
 
-    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) external {
+        if (msg.sender != address(vrfConsumer)) revert InvalidMsgSender();
         VRFRequestInfo memory requestInfo = _vrfRequestInfoMap[requestId];
         uint256 winNumber = randomWords[0] % _poolInfoMap[requestInfo.poolId].totalTickets + 1;
         _poolInfoMap[requestInfo.poolId].roundInfos[requestInfo.roundId - 1].winNumber = uint32(winNumber);

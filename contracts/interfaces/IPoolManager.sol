@@ -2,10 +2,11 @@
 pragma solidity ^0.8.20;
 
 import './IUserRegistar.sol';
+import './IVRFConsumer.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol';
 
 interface IPoolManager {
+    error InvalidMsgSender();
     error NotRegistered();
     error OverHundredPercent();
     error ZeroAddress();
@@ -96,7 +97,7 @@ interface IPoolManager {
 
     function userRegistar() external view returns (IUserRegistar);
 
-    function vrfCoordinator() external view returns (VRFCoordinatorV2Interface);
+    function vrfConsumer() external view returns (IVRFConsumer);
 
     function getTicketOwner(bytes32 poolId, uint256 roundId, uint32 ticket) external view returns (address);
 
@@ -135,6 +136,8 @@ interface IPoolManager {
     function getUnclaimedPrizes(address user) external view returns (bytes32[] memory poolIds, uint256[] memory roundIds, uint256 totalPrizes);
 
     function updateReferralFee(uint24 newReferralFee) external;
+
+    function setVRFConsumer(address vrfConsumer_) external;
 
     function createPool(
         uint8 totalTicketsExp,

@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.25+commit.b61c2a91"
+		"version": "0.8.20+commit.a1b79de6"
 	},
 	"language": "Solidity",
 	"output": {
@@ -21,21 +21,6 @@
 						"internalType": "address",
 						"name": "userRegistar_",
 						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "vrfCoordinator_",
-						"type": "address"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "keyHash_",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "uint64",
-						"name": "subId_",
-						"type": "uint64"
 					}
 				],
 				"stateMutability": "nonpayable",
@@ -85,6 +70,11 @@
 			},
 			{
 				"inputs": [],
+				"name": "InvalidMsgSender",
+				"type": "error"
+			},
+			{
+				"inputs": [],
 				"name": "InvalidStartTime",
 				"type": "error"
 			},
@@ -122,22 +112,6 @@
 			{
 				"inputs": [],
 				"name": "NotWinner",
-				"type": "error"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "have",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "want",
-						"type": "address"
-					}
-				],
-				"name": "OnlyCoordinatorCanFulfill",
 				"type": "error"
 			},
 			{
@@ -453,19 +427,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "MAX_TICKETS_PER_BUY",
-				"outputs": [
-					{
-						"internalType": "uint24",
-						"name": "",
-						"type": "uint24"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "bytes32",
@@ -486,19 +447,6 @@
 				"name": "buyTickets",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "callbackGasLimit",
-				"outputs": [
-					{
-						"internalType": "uint32",
-						"name": "",
-						"type": "uint32"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -595,6 +543,70 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "requestId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "randomWords",
+						"type": "uint256[]"
+					}
+				],
+				"name": "fulfillRandomWords",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "getAllParticipationRecords",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "poolId",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "roundId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "ticketsCount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint32[]",
+								"name": "tickets",
+								"type": "uint32[]"
+							}
+						],
+						"internalType": "struct IPoolManager.ParticipationRecord[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "getAllPoolIds",
 				"outputs": [
@@ -613,9 +625,19 @@
 						"internalType": "address",
 						"name": "user",
 						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "poolId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "roundId",
+						"type": "uint256"
 					}
 				],
-				"name": "getParticipationRecords",
+				"name": "getParticipationRecordsByPoolRound",
 				"outputs": [
 					{
 						"components": [
@@ -630,13 +652,23 @@
 								"type": "uint256"
 							},
 							{
-								"internalType": "uint32",
-								"name": "ticket",
-								"type": "uint32"
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "ticketsCount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint32[]",
+								"name": "tickets",
+								"type": "uint32[]"
 							}
 						],
 						"internalType": "struct IPoolManager.ParticipationRecord[]",
-						"name": "",
+						"name": "records",
 						"type": "tuple[]"
 					}
 				],
@@ -753,7 +785,7 @@
 				"outputs": [
 					{
 						"internalType": "uint32[]",
-						"name": "soldTickets",
+						"name": "",
 						"type": "uint32[]"
 					}
 				],
@@ -841,40 +873,29 @@
 								"type": "uint256"
 							},
 							{
-								"internalType": "uint32",
-								"name": "ticket",
-								"type": "uint32"
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "ticketsCount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint32[]",
+								"name": "tickets",
+								"type": "uint32[]"
 							}
 						],
 						"internalType": "struct IPoolManager.ParticipationRecord[]",
 						"name": "records",
 						"type": "tuple[]"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "keyHash",
-				"outputs": [
+					},
 					{
-						"internalType": "bytes32",
-						"name": "",
-						"type": "bytes32"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "minRequestConfirmations",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
+						"internalType": "uint256",
+						"name": "totalPrizes",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -891,24 +912,6 @@
 					}
 				],
 				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "requestId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256[]",
-						"name": "randomWords",
-						"type": "uint256[]"
-					}
-				],
-				"name": "rawFulfillRandomWords",
-				"outputs": [],
-				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -970,16 +973,16 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "subId",
-				"outputs": [
+				"inputs": [
 					{
-						"internalType": "uint64",
-						"name": "",
-						"type": "uint64"
+						"internalType": "address",
+						"name": "vrfConsumer_",
+						"type": "address"
 					}
 				],
-				"stateMutability": "view",
+				"name": "setVRFConsumer",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -998,64 +1001,12 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint32",
-						"name": "newGasLimit",
-						"type": "uint32"
-					}
-				],
-				"name": "updateCallbackGasLimit",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "bytes32",
-						"name": "newKeyHash",
-						"type": "bytes32"
-					}
-				],
-				"name": "updateKeyHash",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "newMinRequestConfirmations",
-						"type": "uint16"
-					}
-				],
-				"name": "updateMinRequestConfirmations",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
 						"internalType": "uint24",
 						"name": "newReferralFee",
 						"type": "uint24"
 					}
 				],
 				"name": "updateReferralFee",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint64",
-						"name": "newSubId",
-						"type": "uint64"
-					}
-				],
-				"name": "updateSubId",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -1088,10 +1039,10 @@
 			},
 			{
 				"inputs": [],
-				"name": "vrfCoordinator",
+				"name": "vrfConsumer",
 				"outputs": [
 					{
-						"internalType": "contract VRFCoordinatorV2Interface",
+						"internalType": "contract IVRFConsumer",
 						"name": "",
 						"type": "address"
 					}
@@ -1175,34 +1126,18 @@
 		"compilationTarget": {
 			"contracts/PoolManager.sol": "PoolManager"
 		},
-		"evmVersion": "cancun",
+		"evmVersion": "shanghai",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
 	},
 	"sources": {
-		"@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol": {
-			"keccak256": "0x5a502a5ce16796565815b295bb2d18a0d26d6f23621f733918c971047c6091d7",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://f03385e076f6c2ad534bffe7c655cf259242e0f133f0ebfd56f914c0dde4a3f4",
-				"dweb:/ipfs/QmWkQVSoAoRu1LXQTfDeic9QESjQkjT4G5Kt1VptTaxQDP"
-			]
-		},
-		"@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol": {
-			"keccak256": "0xa9f8b7e09811f4ac9f421116b5d6bcf50b5748025c0cb012aaf5ff7c39a6b46a",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://d66b2096987616cda4611c109d9904863872ca5852d736b30f0e19e49afde35f",
-				"dweb:/ipfs/Qmc6jpm3k3YuJG7U2s3FWr81Vk2rdQBhdqD9sA6b8Cr9BE"
-			]
-		},
 		"@openzeppelin/contracts/access/Ownable.sol": {
 			"keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb",
 			"license": "MIT",
@@ -1252,27 +1187,19 @@
 			]
 		},
 		"contracts/PoolManager.sol": {
-			"keccak256": "0x9867157bf94de60f7f8d872ead186e02a9586574cb37c8727cf9b662cc414d28",
+			"keccak256": "0x114b54914455a0fd125847ba354b6804402919046adba464f1a921d2acbf20a1",
 			"license": "GPL-2.0-or-later",
 			"urls": [
-				"bzz-raw://3a80f9fb494480bcbdfa2d019119316beebc98d74f19963666810aee7ed432ff",
-				"dweb:/ipfs/QmRXTJL8i491RRAkUM6ybpnRFVyL6sZwYDZ53izLBG7AEm"
+				"bzz-raw://2ac2878fd15edcacdd99e0459835d62e4a5eb32dcde4e0d644e8721527647f55",
+				"dweb:/ipfs/QmTaRhBEfxdb7KWkBzDTVBAZRnrEtjpRFGF8CH6A4CGp5C"
 			]
 		},
 		"contracts/interfaces/IPoolManager.sol": {
-			"keccak256": "0x5a8ce4c6b6c7de215bf500918865d2fb58d18e94ba5fd1608d3a533c7d561702",
+			"keccak256": "0xd626bfdfdfb649c61d756ce24ad2158b8bde0841ff38206f0dfe2f9031f65242",
 			"license": "GPL-2.0-or-later",
 			"urls": [
-				"bzz-raw://a751493b6b6495597eee7c9956b9f3db71dca5a3aca18120f3a1d0bccec730dc",
-				"dweb:/ipfs/QmV29231YUJf84QsD5N1bjTcdUidGzX4T324fUwnK4NHKv"
-			]
-		},
-		"contracts/interfaces/IRandomNumberGenerator.sol": {
-			"keccak256": "0xfe4bcf2e06a43b8bf6d9cc8e2097cc31b4659f47c00f645b3f95a2069ef914df",
-			"license": "GPL-2.0-or-later",
-			"urls": [
-				"bzz-raw://b908b8760cd515e3ee8773399ce02fac2dd193806e85579a1715c677439f48d2",
-				"dweb:/ipfs/Qmc1aq6nUSnAXKBgJ7C9jEJVrPbnzLnWsjbRH95NPL3iSN"
+				"bzz-raw://195b14e318f59c352b721a92d0027b09dbd15473de23836d56908d14d5a39258",
+				"dweb:/ipfs/QmYWH76J2w9i9tqQYumCXqvsyrKpfWfgh2BVLNUiq3RhXS"
 			]
 		},
 		"contracts/interfaces/IUserRegistar.sol": {
@@ -1281,6 +1208,22 @@
 			"urls": [
 				"bzz-raw://dcfe29092821d1338f4d015c57f245623e19461367448d8932d398c62225c233",
 				"dweb:/ipfs/QmT4LNdcMYtCddX5US5aPhpFZFc5TQvTQ7RjhSWgNRn4L8"
+			]
+		},
+		"contracts/interfaces/IVRFConsumer.sol": {
+			"keccak256": "0xb5cfd30e0b05538c91073d38c90ede4f36e17888a48033c1225a87a535c3262d",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://b4d8332969c83a004ab03738e48707dd1107e79c93aab5052f51c1dede3f495f",
+				"dweb:/ipfs/QmNUoGmtnnknp3KJP1EaWLQ3eWpVinHCZvv5oXFjRCEZCg"
+			]
+		},
+		"contracts/interfaces/IVRFConsumerCallback.sol": {
+			"keccak256": "0x73784044bced43429220e22a4bb3a4b298fdbe05cb63485f2f4d0b660be1034e",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://07b008db3e54f7758a8177ef0a310212c7e17e10de9c81cc6669dd1efee9677b",
+				"dweb:/ipfs/QmbgNrZbcgzrLnXJGo42jfr1MSEYB1LpBNwg2J46Y9CUPw"
 			]
 		}
 	},

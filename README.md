@@ -1,17 +1,3 @@
-# Sample Hardhat Project
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
-```
-
 Sepolia:
 
 MockUSDT 0xeFd73479d675D760ecd0a19c18eB16657327882A
@@ -19,3 +5,13 @@ MockUSDT 0xeFd73479d675D760ecd0a19c18eB16657327882A
 UserRegistar 0xd085ffeB0719134DB8E117C5b6106aBC35bBe20C
 
 PoolManager 0x1532214641bF5FFE476EFbd7cEb3B36aB37Cc952
+
+ArbitrumOne:
+
+MockUSDT 0x88B53102DA1baFa10a4163FFfb9649E1001ce879
+
+UserRegistar 0x28aAec993079403D82d7Ec6A0d8b5bB16317E08b
+
+PoolManager 0x6Ea249D3087F64472e689036648416c3FF685FBa
+
+VRFConsumer 0xA75ff2B5722f1ff4f6fD6602DF8C0BdCa26301D5

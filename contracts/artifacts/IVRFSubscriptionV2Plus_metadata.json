@@ -1,0 +1,328 @@
+{
+	"compiler": {
+		"version": "0.8.20+commit.a1b79de6"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "subId",
+						"type": "uint256"
+					}
+				],
+				"name": "acceptSubscriptionOwnerTransfer",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "subId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "consumer",
+						"type": "address"
+					}
+				],
+				"name": "addConsumer",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "subId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "cancelSubscription",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "createSubscription",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "subId",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "subId",
+						"type": "uint256"
+					}
+				],
+				"name": "fundSubscriptionWithNative",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "startIndex",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxCount",
+						"type": "uint256"
+					}
+				],
+				"name": "getActiveSubscriptionIds",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "subId",
+						"type": "uint256"
+					}
+				],
+				"name": "getSubscription",
+				"outputs": [
+					{
+						"internalType": "uint96",
+						"name": "balance",
+						"type": "uint96"
+					},
+					{
+						"internalType": "uint96",
+						"name": "nativeBalance",
+						"type": "uint96"
+					},
+					{
+						"internalType": "uint64",
+						"name": "reqCount",
+						"type": "uint64"
+					},
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"internalType": "address[]",
+						"name": "consumers",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "subId",
+						"type": "uint256"
+					}
+				],
+				"name": "pendingRequestExists",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "subId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "consumer",
+						"type": "address"
+					}
+				],
+				"name": "removeConsumer",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "subId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "requestSubscriptionOwnerTransfer",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"acceptSubscriptionOwnerTransfer(uint256)": {
+					"details": "will revert if original owner of subId has not requested that msg.sender become the new owner.",
+					"params": {
+						"subId": "- ID of the subscription"
+					}
+				},
+				"addConsumer(uint256,address)": {
+					"params": {
+						"consumer": "- New consumer which can use the subscription",
+						"subId": "- ID of the subscription"
+					}
+				},
+				"cancelSubscription(uint256,address)": {
+					"params": {
+						"subId": "- ID of the subscription",
+						"to": "- Where to send the remaining LINK to"
+					}
+				},
+				"createSubscription()": {
+					"details": "You can manage the consumer set dynamically with addConsumer/removeConsumer.Note to fund the subscription with LINK, use transferAndCall. For exampleLINKTOKEN.transferAndCall(address(COORDINATOR),amount,abi.encode(subId));Note to fund the subscription with Native, use fundSubscriptionWithNative. Be sureto send Native with the call, for example:COORDINATOR.fundSubscriptionWithNative{value: amount}(subId);",
+					"returns": {
+						"subId": "- A unique subscription id."
+					}
+				},
+				"fundSubscriptionWithNative(uint256)": {
+					"params": {
+						"subId": "- ID of the subscription"
+					}
+				},
+				"getActiveSubscriptionIds(uint256,uint256)": {
+					"details": "the order of IDs in the list is **not guaranteed**, therefore, if making successive calls, oneshould consider keeping the blockheight constant to ensure a holistic picture of the contract state",
+					"params": {
+						"maxCount": "maximum number of subscriptions to return, 0 to return all",
+						"startIndex": "index of the subscription to start from"
+					}
+				},
+				"getSubscription(uint256)": {
+					"params": {
+						"subId": "- ID of the subscription"
+					},
+					"returns": {
+						"balance": "- LINK balance of the subscription in juels.",
+						"consumers": "- list of consumer address which are able to use this subscription.",
+						"nativeBalance": "- native balance of the subscription in wei.",
+						"owner": "- owner of the subscription.",
+						"reqCount": "- Requests count of subscription."
+					}
+				},
+				"removeConsumer(uint256,address)": {
+					"params": {
+						"consumer": "- Consumer to remove from the subscription",
+						"subId": "- ID of the subscription"
+					}
+				},
+				"requestSubscriptionOwnerTransfer(uint256,address)": {
+					"params": {
+						"newOwner": "- proposed new owner of the subscription",
+						"subId": "- ID of the subscription"
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"acceptSubscriptionOwnerTransfer(uint256)": {
+					"notice": "Request subscription owner transfer."
+				},
+				"addConsumer(uint256,address)": {
+					"notice": "Add a consumer to a VRF subscription."
+				},
+				"cancelSubscription(uint256,address)": {
+					"notice": "Cancel a subscription"
+				},
+				"createSubscription()": {
+					"notice": "Create a VRF subscription."
+				},
+				"fundSubscriptionWithNative(uint256)": {
+					"notice": "Fund a subscription with native.This method expects msg.value to be greater than 0."
+				},
+				"getActiveSubscriptionIds(uint256,uint256)": {
+					"notice": "Paginate through all active VRF subscriptions."
+				},
+				"getSubscription(uint256)": {
+					"notice": "Get a VRF subscription."
+				},
+				"removeConsumer(uint256,address)": {
+					"notice": "Remove a consumer from a VRF subscription."
+				},
+				"requestSubscriptionOwnerTransfer(uint256,address)": {
+					"notice": "Request subscription owner transfer."
+				}
+			},
+			"notice": "The IVRFSubscriptionV2Plus interface defines the subscriptionrelated methods implemented by the V2Plus coordinator.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/VRFConsumer_flattened.sol": "IVRFSubscriptionV2Plus"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/VRFConsumer_flattened.sol": {
+			"keccak256": "0x4f88ef5c8111c4325c7bb8bdd33f8a6bd3d96c1a789717919194e6212c89826b",
+			"urls": [
+				"bzz-raw://1df3229c1a4df482d12f119a767fe538bd5f37a8d8b1a9cd09998dbe697f628e",
+				"dweb:/ipfs/QmYSXEC4jfuJjvUZ4ikebEFxXgEmDrRfuYEEZEk4Zh7HGu"
+			]
+		}
+	},
+	"version": 1
+}
